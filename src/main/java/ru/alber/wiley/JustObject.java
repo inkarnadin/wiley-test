@@ -1,10 +1,10 @@
 package ru.alber.wiley;
 
-public class Test {
+public class JustObject {
 	
 	private final int value;
 	
-	public Test(int value) {
+	public JustObject(int value) {
 		this.value = value;
 	}
 	
@@ -20,7 +20,7 @@ public class Test {
 			return true;
 		if (this.getClass() != object.getClass())
 			return false;
-		if (this.hashCode() == ((Test) object).hashCode())
+		if (this.hashCode() == ((JustObject) object).hashCode())
 			return true;
 		return false;
 	}

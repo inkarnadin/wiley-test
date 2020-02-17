@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class LeastFrequentlyUsedCache<T> {
 	
@@ -28,24 +28,22 @@ public class LeastFrequentlyUsedCache<T> {
 
 		elementStore.computeIfPresent(object, (k, v) -> v + 1);
 		
-		Entry<T, Integer> minEntry = null;
-		if (!elementStore.isEmpty()) {
-			minEntry = Collections.min(elementStore.entrySet(), 
+		if (elementStore.size() == cacheSize) {
+			Entry<T, Integer> minEntry = Collections.min(elementStore.entrySet(), 
 				    new Comparator<Entry<T, Integer>>() {				       
 				        public int compare(Entry<T, Integer> e1, Entry<T, Integer> e2) {
 				            return e1.getValue().compareTo(e2.getValue());
 				        }
-				    });					
+				    });	
+			
+			if (!object.equals(minEntry.getKey()) && !elementStore.containsKey(object)) 
+				elementStore.remove(minEntry.getKey());				
 		}
-		
-		if (elementStore.size() == cacheSize && !object.equals(minEntry.getKey()) && !elementStore.containsKey(object)) {
-			elementStore.remove(minEntry.getKey());			
-		}		
-		elementStore.putIfAbsent(object, 1);
 
-		elementStore.forEach((k, v) -> { 
-			System.out.print(k + " = " + v + ", "); 
-		});
-		System.out.println();
+		elementStore.putIfAbsent(object, 1);
+	}
+	
+	public Set<T> viewAll() {
+		return elementStore.keySet();
 	}
 }

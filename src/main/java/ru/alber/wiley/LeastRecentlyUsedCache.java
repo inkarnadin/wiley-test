@@ -1,7 +1,7 @@
 package ru.alber.wiley;
 
-import java.util.Iterator;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -33,13 +33,10 @@ public class LeastRecentlyUsedCache<T> {
 		
 		elementAgeStore.push(object);
 		elementStore.putIfAbsent(object, 0);
-		
-		Iterator<T> itr = elementAgeStore.iterator();
-		while (itr.hasNext()) { 
-			System.out.print(itr.next() + " "); 
-		} 
-		System.out.println();
 	}	
-
+	
+	public Set<T> viewAll() {
+		return elementStore.keySet();
+	}
 
 }
