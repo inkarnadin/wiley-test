@@ -1,8 +1,6 @@
 package ru.alber.wiley;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,15 +27,10 @@ public class LeastFrequentlyUsedCache<T> {
 		elementStore.computeIfPresent(object, (k, v) -> v + 1);
 		
 		if (elementStore.size() == cacheSize) {
-			Entry<T, Integer> minEntry = Collections.min(elementStore.entrySet(), 
-				    new Comparator<Entry<T, Integer>>() {				       
-				        public int compare(Entry<T, Integer> e1, Entry<T, Integer> e2) {
-				            return e1.getValue().compareTo(e2.getValue());
-				        }
-				    });	
-			
-			if (!object.equals(minEntry.getKey()) && !elementStore.containsKey(object)) 
-				elementStore.remove(minEntry.getKey());				
+			elementStore.entrySet().parallelStream().min(Map.Entry.comparingByValue()).ifPresent(x -> {
+				if (!object.equals(x.getKey()) && !elementStore.containsKey(object)) 
+					elementStore.remove(x.getKey());
+			});
 		}
 
 		elementStore.putIfAbsent(object, 1);
